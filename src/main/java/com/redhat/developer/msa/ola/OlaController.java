@@ -62,7 +62,7 @@ public class OlaController {
             .setConnectTimeout(2000)
             .setConnectionRequestTimeout(2000)
             .build();
-        HttpGet httpGet = new HttpGet("http://hola:8080/hola-chaining");
+        HttpGet httpGet = new HttpGet("http://hola:8080/rest/hola-chaining");
         httpGet.setConfig(requestConfig);
         HttpClient httpClient = HttpClientBuilder.create().build();
         return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
