@@ -17,7 +17,6 @@
 package com.redhat.developer.msa.ola;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.UnknownHostException;
 
 import org.apache.http.client.HttpClient;
@@ -48,7 +47,7 @@ public class OlaController {
         try {
             newArray.put(ola());
             String bonJourResponse = getBonjourResponse();
-            JSONArray responseArray = new JSONArray((new StringReader(bonJourResponse)));
+            JSONArray responseArray = new JSONArray(bonJourResponse);
             for (int x=0; x < responseArray.length(); x++){
                 newArray.put(responseArray.get(x));
             }
