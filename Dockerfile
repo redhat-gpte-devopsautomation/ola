@@ -1,9 +1,7 @@
-FROM rhel7
+FROM jboss/base-jdk:8
 
-RUN yum -y install java && yum clean all
+ADD target/ola.jar .
 
 EXPOSE 8080
 
 CMD java -jar ola.jar
-
-ADD target/ola.jar .

@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2016, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  * <p/>
@@ -16,21 +16,57 @@
  */
 package com.redhat.developer.msa.ola;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.UnknownHostException;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.UnknownHostException;
-
 @RestController
 public class OlaController {
 
 	@CrossOrigin
-	@RequestMapping(method = RequestMethod.GET, value = "/", produces = "text/plain")
+	@RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
 	public String ola() throws UnknownHostException {
 		String hostname = System.getenv().getOrDefault("HOSTNAME", "unknown");
 		return String.format("Olá de %s", hostname);
 	}
+	
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.GET, value = "/ola-chaining", produces = "text/plain")
+    public String sayHelloChaining() {
+        JSONArray newArray = new JSONArray();
+        try {
+            newArray.put(ola());
+            String bonJourResponse = getBonjourResponse();
+            JSONArray responseArray = new JSONArray((new StringReader(bonJourResponse)));
+            for (int x=0; x < responseArray.length(); x++){
+                newArray.put(responseArray.get(x));
+            }
+        } catch (Exception e) {
+            newArray.put("Error: " + e.getMessage());
+        }
+        return newArray.toString();
+    }
+
+    private String getBonjourResponse() throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectTimeout(2000)
+            .setConnectionRequestTimeout(2000)
+            .build();
+        HttpGet httpGet = new HttpGet("http://hola:8080/hola-chaining");
+        httpGet.setConfig(requestConfig);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
+    }
 
 }
