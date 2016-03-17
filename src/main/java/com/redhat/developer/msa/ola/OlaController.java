@@ -52,8 +52,8 @@ public class OlaController {
         JSONArray newArray = new JSONArray();
         try {
             newArray.put(ola());
-            String bonJourResponse = getHolaResponse();
-            JSONArray responseArray = new JSONArray(bonJourResponse);
+            String holaResponse = getHolaResponse();
+            JSONArray responseArray = new JSONArray(holaResponse);
             for (int x=0; x < responseArray.length(); x++){
                 newArray.put(responseArray.get(x));
             }
