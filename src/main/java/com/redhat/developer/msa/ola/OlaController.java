@@ -17,6 +17,7 @@
 package com.redhat.developer.msa.ola;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.apache.http.client.HttpClient;
@@ -36,8 +37,13 @@ public class OlaController {
 	@CrossOrigin
 	@RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
 	public String ola() throws UnknownHostException {
-		String hostname = System.getenv().getOrDefault("HOSTNAME", "unknown");
-		return String.format("Olá de %s", hostname);
+        String hostname = null;
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            hostname = "unknown";
+        }
+        return "Olá de " + hostname;
 	}
 	
     @CrossOrigin
@@ -46,18 +52,18 @@ public class OlaController {
         JSONArray newArray = new JSONArray();
         try {
             newArray.put(ola());
-            String bonJourResponse = getBonjourResponse();
+            String bonJourResponse = getHolaResponse();
             JSONArray responseArray = new JSONArray(bonJourResponse);
             for (int x=0; x < responseArray.length(); x++){
                 newArray.put(responseArray.get(x));
             }
         } catch (Exception e) {
-            newArray.put("Error: " + e.getMessage());
+            newArray.put("Generic Hola response");
         }
         return newArray.toString();
     }
 
-    private String getBonjourResponse() throws IOException {
+    private String getHolaResponse() throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout(2000)
             .setConnectionRequestTimeout(2000)
