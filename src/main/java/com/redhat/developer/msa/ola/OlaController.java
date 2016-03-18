@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api")
 public class OlaController {
 
 	@CrossOrigin
@@ -58,7 +59,7 @@ public class OlaController {
                 newArray.put(responseArray.get(x));
             }
         } catch (Exception e) {
-            newArray.put("Generic Hola response");
+            newArray.put("Generic Hola response (Fallback!)");
         }
         return newArray.toString();
     }
@@ -68,7 +69,7 @@ public class OlaController {
             .setConnectTimeout(2000)
             .setConnectionRequestTimeout(2000)
             .build();
-        HttpGet httpGet = new HttpGet("http://hola:8080/rest/hola-chaining");
+        HttpGet httpGet = new HttpGet("http://hola:8080/api/hola-chaining");
         httpGet.setConfig(requestConfig);
         HttpClient httpClient = HttpClientBuilder.create().build();
         return EntityUtils.toString(httpClient.execute(httpGet).getEntity());

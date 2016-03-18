@@ -5,19 +5,15 @@ Build and Deploy ola
 --------------------
 
 1. Open a command prompt and navigate to the root directory of this microservice.
-2. Type this command to build archive:
+2. Type this command to build and execute the microservice:
 
-        mvn clean package
+        mvn clean compile spring-boot:run
 
-3. This will create `target/ola.jar`
-4. Execute it:
-
-		java -jar target/ola.jar
 
 
 Access the application
 ----------------------
 
-The application will be running at the following URL: <http://localhost:8080/ola>
+The application will be running at the following URL: <http://localhost:8080/api/ola>
 
 
