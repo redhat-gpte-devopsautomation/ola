@@ -16,63 +16,58 @@
  */
 package com.redhat.developer.msa.ola;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
+import com.netflix.hystrix.HystrixCommandProperties;
+import feign.hystrix.HystrixFeign;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class OlaController {
 
+	/**
+	 * The next REST endpoint URL of the service chain to be called.
+	 */
+	private static final String NEXT_ENDPOINT_URL = "http://hola:8080/api/hola-chaining";
+
+	/**
+	 * Setting Hystrix timeout for the chain in 750ms (we have 3 more chained service calls).
+	 */
+	static {
+		HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(750);
+	}
+
 	@CrossOrigin
 	@RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
-	public String ola() throws UnknownHostException {
-        String hostname = null;
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            hostname = "unknown";
-        }
-        return "Olá de " + hostname;
+	public String ola() {
+		String hostname = System.getenv().getOrDefault("HOSTNAME", "Unknown");
+		return String.format("Olá de %s", hostname);
 	}
-	
-    @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, value = "/ola-chaining", produces = "text/plain")
-    public String sayHelloChaining() {
-        JSONArray newArray = new JSONArray();
-        try {
-            newArray.put(ola());
-            String holaResponse = getHolaResponse();
-            JSONArray responseArray = new JSONArray(holaResponse);
-            for (int x=0; x < responseArray.length(); x++){
-                newArray.put(responseArray.get(x));
-            }
-        } catch (Exception e) {
-            newArray.put("Generic Hola response (Fallback!)");
-        }
-        return newArray.toString();
-    }
 
-    private String getHolaResponse() throws IOException {
-        RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectTimeout(2000)
-            .setConnectionRequestTimeout(2000)
-            .build();
-        HttpGet httpGet = new HttpGet("http://hola:8080/api/hola-chaining");
-        httpGet.setConfig(requestConfig);
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
-    }
+	@CrossOrigin
+	@RequestMapping(method = RequestMethod.GET, value = "/ola-chaining", produces = "application/json")
+	public List<String> sayHelloChaining() {
+		List<String> greetings = new ArrayList<>();
+		greetings.add(ola());
+		greetings.addAll(createFeign().greetings());
+		return greetings;
+	}
+
+	/**
+	 * This is were the "magic" happens: it creates a Feign, which is a proxy interface for remote
+	 * calling a REST endpoint with Hystrix fallback support.
+	 *
+	 * @return The feign pointing to the service URL and with Hystrix fallback.
+	 */
+	private ChainedGreeting createFeign() {
+		return HystrixFeign.builder().target(ChainedGreeting.class, NEXT_ENDPOINT_URL,
+				() -> Collections.singletonList("Ola response (fallback)"));
+	}
 
 }
