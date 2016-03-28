@@ -67,7 +67,7 @@ public class OlaController {
 	 */
 	private ChainedGreeting createFeign() {
 		return HystrixFeign.builder().target(ChainedGreeting.class, NEXT_ENDPOINT_URL,
-				() -> Collections.singletonList("Ola response (fallback)"));
+				() -> Collections.singletonList("Hola response (fallback)"));
 	}
 
 }
