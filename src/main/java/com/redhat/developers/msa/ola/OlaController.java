@@ -39,7 +39,7 @@ public class OlaController {
     /**
      * The next REST endpoint URL of the service chain to be called.
      */
-    private static final String NEXT_ENDPOINT_URL = "http://hola-helloworld-msa.rhel-cdk.10.1.2.2.xip.io/";
+    private static final String NEXT_ENDPOINT_URL = "http://hola:8080/";
 
     /**
      * Setting Hystrix timeout for the chain in 750ms (we have 3 more chained service calls).
