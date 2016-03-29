@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 
 @Configuration
-public class HystrixServerConfiguration {
+public class HystrixServletConfiguration {
 
     @Bean
     public ServletRegistrationBean jerseyServlet() {
