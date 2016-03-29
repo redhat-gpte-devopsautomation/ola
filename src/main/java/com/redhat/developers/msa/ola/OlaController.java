@@ -60,7 +60,7 @@ public class OlaController {
     public List<String> sayHelloChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(ola());
-        greetings.addAll(getNextService().ola());
+        greetings.addAll(getNextService().hola());
         return greetings;
     }
 
