@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.netflix.config.ConfigurationManager;
-
 import feign.Logger;
 import feign.Logger.Level;
 import feign.hystrix.HystrixFeign;
@@ -36,17 +34,6 @@ import feign.jackson.JacksonDecoder;
 @RequestMapping("/api")
 public class OlaController {
 
-    /**
-     * The next REST endpoint URL of the service chain to be called.
-     */
-    private static final String NEXT_ENDPOINT_URL = "http://hola:8080/";
-
-    /**
-     * Setting Hystrix timeout for the chain in 750ms (we have 3 more chained service calls).
-     */
-    static {
-        ConfigurationManager.getConfigInstance().setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 750);
-    }
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
@@ -60,7 +47,7 @@ public class OlaController {
     public List<String> sayHelloChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(ola());
-        greetings.addAll(getNextService().hola());
+        greetings.addAll(getNextService().holaChaining());
         return greetings;
     }
 
@@ -74,7 +61,7 @@ public class OlaController {
         return HystrixFeign.builder()
             .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
             .decoder(new JacksonDecoder())
-            .target(HolaService.class, NEXT_ENDPOINT_URL,
+            .target(HolaService.class, "http://hola:8080/",
                 () -> Collections.singletonList("Hola response (fallback)"));
     }
 

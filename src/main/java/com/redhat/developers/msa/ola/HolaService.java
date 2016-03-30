@@ -23,6 +23,6 @@ import java.util.List;
 public interface HolaService {
 
 	@RequestLine("GET /api/hola-chaining")
-	public List<String> hola();
+	public List<String> holaChaining();
 
 }
