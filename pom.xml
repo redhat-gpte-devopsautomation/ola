@@ -34,11 +34,46 @@
 	</parent>
 
 	<properties>
+		<!-- Explicitly declaring the source encoding eliminates the following
+			message: -->
+		<!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered
+			resources, i.e. build is platform dependent! -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- maven-compiler-plugin -->
 		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- other plugin versions -->
 		<netflix.feign.version>8.15.1</netflix.feign.version>
 		<hystrix.version>1.5.1</hystrix.version>
+
+		<!-- fabric8 version -->
+		<fabric8.version>2.2.105</fabric8.version>
+		<docker.maven.plugin.version>0.14.2</docker.maven.plugin.version>
+
+		<!-- Docker & Fabric8 Configs -->
+		<docker.from>fabric8/java-jboss-openjdk8-jdk:1.0.10</docker.from>
+		<fabric8.dockerUser>redhatmsa/</fabric8.dockerUser>
+		<docker.image>${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
+		<docker.port.container.jolokia>8778</docker.port.container.jolokia>
+		<docker.port.container.http>8080</docker.port.container.http>
+
+		<!-- Openshift service customization -->
+		<fabric8.service.name>${project.artifactId}</fabric8.service.name>
+		<fabric8.service.port>8080</fabric8.service.port>
+		<fabric8.service.containerPort>8080</fabric8.service.containerPort>
+		<fabric8.service.type>LoadBalancer</fabric8.service.type>
+		<fabric8.label.group>msa</fabric8.label.group>
+		<fabric8.label.hystrix-enable>true</fabric8.label.hystrix-enable>
+		<fabric8.iconRef>icons/java</fabric8.iconRef>
+		<fabric8.env.AB_JOLOKIA_HTTPS>true</fabric8.env.AB_JOLOKIA_HTTPS>
+
+		<!-- Readiness Probe -->
+		<fabric8.readinessProbe.httpGet.path>/api/ola</fabric8.readinessProbe.httpGet.path>
+		<fabric8.readinessProbe.httpGet.port>8080</fabric8.readinessProbe.httpGet.port>
+		<fabric8.readinessProbe.initialDelaySeconds>5</fabric8.readinessProbe.initialDelaySeconds>
+		<fabric8.readinessProbe.timeoutSeconds>30</fabric8.readinessProbe.timeoutSeconds>
 	</properties>
 
 	<dependencies>
@@ -81,6 +116,33 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${docker.maven.plugin.version}</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.image}</name>
+							<build>
+								<from>${docker.from}</from>
+								<assembly>
+									<basedir>/app</basedir>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<env>
+									<JAVA_APP_JAR>${project.build.finalName}.jar</JAVA_APP_JAR>
+								</env>
+							</build>
+						</image>
+					</images>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
