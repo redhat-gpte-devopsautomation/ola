@@ -40,6 +40,7 @@ import feign.Logger.Level;
 import feign.httpclient.ApacheHttpClient;
 import feign.hystrix.HystrixFeign;
 import feign.jackson.JacksonDecoder;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
@@ -50,6 +51,7 @@ public class OlaController {
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
+    @ApiOperation("Returns the greeting in Portuguese")
     public String ola() {
         String hostname = System.getenv().getOrDefault("HOSTNAME", "Unknown");
         return String.format("Olá de %s", hostname);
@@ -57,6 +59,7 @@ public class OlaController {
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/ola-chaining", produces = "application/json")
+    @ApiOperation("Returns the greeting plus the next service in the chain")
     public List<String> sayHelloChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(ola());
@@ -65,6 +68,7 @@ public class OlaController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/health")
+    @ApiOperation("Used to verify the health of the service")
     public String health() {
         return "I'm ok";
     }
