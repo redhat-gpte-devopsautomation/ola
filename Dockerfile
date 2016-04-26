@@ -1,7 +1,8 @@
-FROM jboss/base-jdk:8
+FROM fabric8/java-jboss-openjdk8-jdk:1.0.10
 
-ADD target/ola.jar /
+ENV JAVA_APP_JAR ola.jar
+ENV AB_JOLOKIA_HTTPS true
 
 EXPOSE 8080
 
-CMD java -jar /ola.jar
+ADD target/ola.jar /app
