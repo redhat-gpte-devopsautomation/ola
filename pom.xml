@@ -57,7 +57,7 @@
 		<docker.maven.plugin.version>0.15.8</docker.maven.plugin.version>
 
 		<!-- Docker & Fabric8 Configs -->
-		<docker.from>fabric8/java-jboss-openjdk8-jdk:1.0.10</docker.from>
+		<docker.from>fabric8/java-jboss-openjdk8-jdk:1.1.4</docker.from>
 		<fabric8.dockerUser>redhatmsa/</fabric8.dockerUser>
 		<docker.image>${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
 		<docker.port.container.jolokia>8778</docker.port.container.jolokia>
@@ -71,7 +71,8 @@
 		<fabric8.label.group>msa</fabric8.label.group>
 		<fabric8.label.hystrix.enabled>true</fabric8.label.hystrix.enabled>
 		<fabric8.iconRef>icons/java</fabric8.iconRef>
-		<fabric8.env.AB_JOLOKIA_HTTPS>true</fabric8.env.AB_JOLOKIA_HTTPS>
+		<fabric8.env.AB_ENABLED>jolokia</fabric8.env.AB_ENABLED>
+		<fabric8.env.AB_JOLOKIA_AUTH_OPENSHIFT>true</fabric8.env.AB_JOLOKIA_AUTH_OPENSHIFT>
 
 		<!-- Readiness Probe -->
 		<fabric8.readinessProbe.httpGet.path>/api/health</fabric8.readinessProbe.httpGet.path>

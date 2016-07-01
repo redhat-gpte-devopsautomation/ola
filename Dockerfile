@@ -1,7 +1,8 @@
-FROM fabric8/java-jboss-openjdk8-jdk:1.0.10
+FROM fabric8/java-jboss-openjdk8-jdk:1.1.4
 
 ENV JAVA_APP_JAR ola.jar
-ENV AB_JOLOKIA_HTTPS true
+ENV AB_ENABLED jolokia
+ENV AB_JOLOKIA_AUTH_OPENSHIFT true
 
 EXPOSE 8080
 
