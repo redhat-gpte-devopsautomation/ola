@@ -57,7 +57,7 @@
 		<docker.maven.plugin.version>0.15.8</docker.maven.plugin.version>
 
 		<!-- Docker & Fabric8 Configs -->
-		<docker.from>fabric8/java-jboss-openjdk8-jdk:1.1.4</docker.from>
+		<docker.from>fabric8/java-jboss-openjdk8-jdk:1.1.7</docker.from>
 		<fabric8.dockerUser>redhatmsa/</fabric8.dockerUser>
 		<docker.image>${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
 		<docker.port.container.jolokia>8778</docker.port.container.jolokia>
@@ -73,6 +73,7 @@
 		<fabric8.iconRef>icons/java</fabric8.iconRef>
 		<fabric8.env.AB_ENABLED>jolokia</fabric8.env.AB_ENABLED>
 		<fabric8.env.AB_JOLOKIA_AUTH_OPENSHIFT>true</fabric8.env.AB_JOLOKIA_AUTH_OPENSHIFT>
+		<fabric8.env.JAVA_OPTIONS>-Xmx256m -Djava.security.egd=file:///dev/./urandom</fabric8.env.JAVA_OPTIONS>
 
 		<!-- Readiness Probe -->
 		<fabric8.readinessProbe.httpGet.path>/api/health</fabric8.readinessProbe.httpGet.path>
