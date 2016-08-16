@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ServerSpan;
 import com.github.kristofa.brave.http.DefaultSpanNameProvider;
-import com.github.kristofa.brave.http.StringServiceNameProvider;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 
@@ -85,7 +84,7 @@ public class OlaController {
         final ServerSpan serverSpan = brave.serverSpanThreadBinder().getCurrentServerSpan();
         final CloseableHttpClient httpclient =
             HttpClients.custom()
-                .addInterceptorFirst(new BraveHttpRequestInterceptor(brave.clientRequestInterceptor(), new StringServiceNameProvider(serviceName), new DefaultSpanNameProvider()))
+                .addInterceptorFirst(new BraveHttpRequestInterceptor(brave.clientRequestInterceptor(), new DefaultSpanNameProvider()))
                 .addInterceptorFirst(new BraveHttpResponseInterceptor(brave.clientResponseInterceptor()))
                 .build();
         String url = String.format("http://%s:8080/", serviceName);
