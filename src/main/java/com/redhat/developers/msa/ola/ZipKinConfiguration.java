@@ -39,12 +39,9 @@ public class ZipKinConfiguration {
     @Bean
     @Scope(value = "singleton")
     public Brave getBrave() {
-    	String zipkinUrl = System.getenv("ZIPKIN_SERVER_URL");
-    	if (zipkinUrl == null) {
-    		zipkinUrl = "http://zipkin-query:9411";
-    	}
         Brave brave = new Brave.Builder("ola")
-            .spanCollector(HttpSpanCollector.create(zipkinUrl, new EmptySpanCollectorMetricsHandler()))
+            .spanCollector(HttpSpanCollector.create(System.getenv("ZIPKIN_SERVER_URL"),
+            		new EmptySpanCollectorMetricsHandler()))
             .build();
         return brave;
     }
