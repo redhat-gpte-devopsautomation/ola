@@ -45,6 +45,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- other plugin versions -->
+		<keycloak.version>2.4.0.Final</keycloak.version>
 		<netflix.feign.version>8.15.1</netflix.feign.version>
 		<hystrix.version>1.5.1</hystrix.version>
 		<brave.version>3.9.1</brave.version>
@@ -86,6 +87,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-boot-adapter</artifactId>
+			<version>${keycloak.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-tomcat8-adapter</artifactId>
+			<version>${keycloak.version}</version>
 		</dependency>
 
 		<dependency>

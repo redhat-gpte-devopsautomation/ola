@@ -9,6 +9,7 @@ import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
 import com.github.kristofa.brave.ServerRequestInterceptor;
 import com.github.kristofa.brave.ServerResponseInterceptor;
+import com.github.kristofa.brave.Brave.Builder;
 import com.github.kristofa.brave.http.DefaultSpanNameProvider;
 import com.github.kristofa.brave.http.HttpSpanCollector;
 import com.github.kristofa.brave.servlet.BraveServletFilter;
@@ -39,11 +40,17 @@ public class ZipKinConfiguration {
     @Bean
     @Scope(value = "singleton")
     public Brave getBrave() {
-        Brave brave = new Brave.Builder("ola")
-            .spanCollector(HttpSpanCollector.create(System.getenv("ZIPKIN_SERVER_URL"),
-            		new EmptySpanCollectorMetricsHandler()))
-            .build();
-        return brave;
+        String zipkingServer = System.getenv("ZIPKIN_SERVER_URL");
+        Builder builder = new Brave.Builder("ola");
+        if (null == zipkingServer) {
+            // Default configuration
+            return builder.build();
+        } else {
+            // Brave configured for a Server
+            return builder.spanCollector(HttpSpanCollector.create(System.getenv("ZIPKIN_SERVER_URL"),
+                new EmptySpanCollectorMetricsHandler()))
+                .build();
+        }
     }
 
 }
