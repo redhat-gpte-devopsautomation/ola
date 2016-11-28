@@ -55,7 +55,7 @@ public class OlaController {
 
     @Autowired
     private Brave brave;
-    
+
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/ola", produces = "text/plain")
     @ApiOperation("Returns the greeting in Portuguese")
@@ -73,7 +73,7 @@ public class OlaController {
         greetings.addAll(getNextService().hola());
         return greetings;
     }
-    
+
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/ola-secured", produces = "text/plain")
     @ApiOperation("Returns a message that is only available for authenticated users")
@@ -90,12 +90,12 @@ public class OlaController {
         request.logout();
         return "Logged out";
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/health")
     @ApiOperation("Used to verify the health of the service")
     public String health() {
         return "I'm ok";
     }
-        
 
     /**
      * This is were the "magic" happens: it creates a Feign, which is a proxy interface for remote calling a REST endpoint with
@@ -104,7 +104,6 @@ public class OlaController {
      * @return The feign pointing to the service URL and with Hystrix fallback.
      */
     private HolaService getNextService() {
-        final String serviceName = "hola";
         // This stores the Original/Parent ServerSpan from ZiPkin.
         final ServerSpan serverSpan = brave.serverSpanThreadBinder().getCurrentServerSpan();
         final CloseableHttpClient httpclient =
@@ -112,7 +111,6 @@ public class OlaController {
                 .addInterceptorFirst(new BraveHttpRequestInterceptor(brave.clientRequestInterceptor(), new DefaultSpanNameProvider()))
                 .addInterceptorFirst(new BraveHttpResponseInterceptor(brave.clientResponseInterceptor()))
                 .build();
-        String url = String.format("http://%s:8080/", serviceName);
         return HystrixFeign.builder()
             // Use apache HttpClient which contains the ZipKin Interceptors
             .client(new ApacheHttpClient(httpclient))
@@ -120,7 +118,7 @@ public class OlaController {
             .requestInterceptor((t) -> brave.serverSpanThreadBinder().setCurrentSpan(serverSpan))
             .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
             .decoder(new JacksonDecoder())
-            .target(HolaService.class, url,
+            .target(HolaService.class, "http://hola:8080/",
                 () -> Collections.singletonList("Hola response (fallback)"));
     }
 
