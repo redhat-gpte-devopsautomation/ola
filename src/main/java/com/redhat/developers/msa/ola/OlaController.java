@@ -79,7 +79,7 @@ public class OlaController {
     @ApiOperation("Returns a message that is only available for authenticated users")
     public String olaSecured(KeycloakPrincipal<RefreshableKeycloakSecurityContext> principal) {
         AccessToken token = principal.getKeycloakSecurityContext().getToken();
-        return "This is a Secured resource. You are loged as " + token.getName();
+        return "This is a Secured resource. You are logged as " + token.getName();
     }
 
     @CrossOrigin
